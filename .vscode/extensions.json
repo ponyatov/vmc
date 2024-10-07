@@ -1,0 +1,10 @@
+{
+    "recommendations": [
+        "stkb.rewrap",
+        "ryuta46.multi-command",
+        "tabnine.tabnine-vscode",
+        "ms-vscode.makefile-tools",
+        // OCaml
+        "ocamllabs.ocaml-platform",
+        "zepalmer.ocaml-indentation",
+}

@@ -1,0 +1,7 @@
+(library
+ (name vmc)
+ (flags
+  (-warn-error "-unused-value-declaration"))
+ (inline_tests)
+ (preprocess
+  (pps ppx_inline_test)))
