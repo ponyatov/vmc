@@ -59,8 +59,22 @@ let main_g hpp cpp =
 /// @}
 "
 
+let dirs (path : string) : unit =
+  let dir (path : string) : unit =
+    try Sys.mkdir path 0o700 with
+    | Sys_error _ -> ()
+  in
+  List.iter
+    (fun d -> path ^ d |> dir)
+    [ ""; "/.vscode"; "/bin"; "/doc"; "/lib"; "/inc"; "/src"; "/tmp"; "/ref" ]
+
+(* Sys.mkdir (path ^ "/inc"); Sys.mkdir (path ^ "/inc"); Sys.mkdir (path ^
+   "/inc"); Sys.mkdir (path ^ "/inc"); Sys.mkdir (path ^ "/inc"); Sys.mkdir
+   (path ^ "/inc"); Sys.mkdir (path ^ "/inc"); Sys.mkdir (path ^ "/inc"); *)
+
 let _ =
-  let path : string = Sys.getenv "HOME" ^ "/vmc" in
+  let path : string = Sys.getenv "HOME" ^ "/vmc/meta" in
+  dirs path;
   let hpp = open_out (path ^ "/inc/vmc.hpp") in
   let cpp = open_out (path ^ "/src/vmc.cpp") in
   incl hpp cpp;

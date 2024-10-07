@@ -9,8 +9,8 @@ CF   = clang-format -style=file -i
 M += $(wildcard src/lib/*.ml) $(wildcard src/bin/*.ml)
 D += $(wildcard dune*) $(wildcard src/lib/dune*) $(wildcard src/bin/dune*)
 S += lib/$(MODULE).ini $(wildcard lib/*.c)
-C += $(wildcard src/*.c*)
-H += $(wildcard inc/*.h*)
+C += $(wildcard meta/src/*.c*)
+H += $(wildcard meta/inc/*.h*)
 
 # cfg
 CFLAGS += -O0 -ggdb -Iinc -Itmp
