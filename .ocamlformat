@@ -4,3 +4,4 @@ margin=80
 line-endings=lf
 break-cases=all
 wrap-comments=true
+break-string-literals=never

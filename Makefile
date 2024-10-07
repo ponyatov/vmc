@@ -3,6 +3,7 @@ MODULE = $(notdir $(CURDIR))
 
 # tool
 CURL = curl -L -o
+CF   = clang-format -style=file -i
 
 # src
 M += $(wildcard src/*.ml)
@@ -36,9 +37,11 @@ test: $(M) $(D) $(S)
 
 # format
 .PHONY: format
-format: tmp/format_ml
+format: tmp/format_ml tmp/format_cpp
 tmp/format_ml: $(M) $(D) .ocamlformat
 	dune fmt ; touch $@
+tmp/format_cpp: $(C) $(H)
+	$(CF) $^ && touch $@
 
 .ocamlformat:
 	echo "version=`ocamlformat --version`" > $@
