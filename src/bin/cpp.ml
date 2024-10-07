@@ -69,8 +69,10 @@ let dirs (path : string) (_name : string) : unit =
   |> List.iter (fun d ->
          path ^ d |> dir;
          let giti = path ^ d ^ "/.gitignore" |> open_out in
-         if List.exists (( = ) d) star then Printf.fprintf giti "*\n";
-         Printf.fprintf giti "!.gitignore\n";
+         let g = Printf.fprintf giti in
+         if d = "" then "*~\n*.swp\n*.log\n/docs/\n" |> g;
+         if List.exists (( = ) d) star then "*\n" |> g;
+         "!.gitignore\n" |> g;
          close_out giti)
 
 let gen (name : string) : unit =
