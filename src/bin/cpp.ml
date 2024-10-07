@@ -64,11 +64,14 @@ let dirs (path : string) (_name : string) : unit =
     try Sys.mkdir path 0o700 with
     | Sys_error _ -> ()
   in
-
-  [ ""; "/.vscode"; "/bin"; "/doc"; "/lib"; "/inc"; "/src"; "/tmp"; "/ref" ]
+  let star = [ "/bin"; "/tmp"; "/ref" ] in
+  [ ""; "/.vscode"; "/doc"; "/lib"; "/inc"; "/src" ] @ star
   |> List.iter (fun d ->
          path ^ d |> dir;
-         path ^ d ^ "/.gitignore" |> open_out |> close_out)
+         let giti = path ^ d ^ "/.gitignore" |> open_out in
+         if List.exists (( = ) d) star then Printf.fprintf giti "*\n";
+         Printf.fprintf giti "!.gitignore\n";
+         close_out giti)
 
 let gen (name : string) : unit =
   let path : string = Sys.getenv "HOME" ^ "/vmc/" ^ name in
