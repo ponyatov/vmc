@@ -41,10 +41,23 @@ let%test "zero" = "int:0" = (Id "zero" |> eval glob |> dump)
 (** project path: must be in user $HOME *)
 let path = Sys.getenv "HOME" ^ "/vmc"
 
-(** run code generator on `dune test` *)
-let _ =
-  (* let path = Sys.getenv "HOME" ^ "/vmc" in *)
-  (* *)
+(** headers code generator *)
+let hpp =
+  let hpp = open_out (path ^ "/inc/vmc.hpp") in
+  Printf.fprintf hpp
+    "#pragma once
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <assert.h>
+
+int main(int argc, char *argv[]);
+void arg(int argc, char *argv);
+";
+  close_out hpp
+
+(** app code generator *)
+let cpp =
   let cpp = open_out (path ^ "/src/vmc.cpp") in
   Printf.fprintf cpp
     "#include \"vmc.hpp\"
@@ -60,17 +73,4 @@ void arg(int argc, char *argv) {  //
     fprintf(stderr, \"argv[%%i] = <%%s>\\n\", argc, argv);
 }
 ";
-  close_out cpp;
-  (* *)
-  let hpp = open_out (path ^ "/inc/vmc.hpp") in
-  Printf.fprintf hpp
-    "#pragma once
-
-#include <stdio.h>
-#include <stdlib.h>
-#include <assert.h>
-
-int main(int argc, char *argv[]);
-void arg(int argc, char *argv);
-";
-  close_out hpp
+  close_out cpp
