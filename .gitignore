@@ -2,6 +2,5 @@
 *.swp
 *.log
 /_build/
-/meta/
 /docs/
 !.gitignore

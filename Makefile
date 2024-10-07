@@ -11,6 +11,9 @@ S += lib/$(MODULE).ini $(wildcard lib/*.c)
 C += $(wildcard src/*.c*)
 H += $(wildcard inc/*.h*)
 
+# cfg
+CFLAGS += -O0 -ggdb -Iinc -Itmp
+
 # all
 .PHONY: all run
 all: $(M) $(D) $(S)
@@ -21,6 +24,10 @@ run: $(M) $(D) $(S)
 .PHONY: utop
 utop: $(M) $(D) $(S)
 	dune $@
+
+.PHONY: cpp
+cpp: bin/$(MODULE) $(S)
+	$^
 
 # test
 .PHONY: test
@@ -40,6 +47,10 @@ tmp/format_ml: $(M) $(D) .ocamlformat
 	echo "line-endings=lf"                >> $@
 	echo "break-cases=all"                >> $@
 	echo "wrap-comments=true"             >> $@
+
+# rule
+bin/$(MODULE): $(C) $(H) Makefile
+	$(CXX) $(CFLAGS) -o $@ $(C) $(L)
 
 # install
 .PHONY: install update

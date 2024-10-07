@@ -37,3 +37,8 @@ let eval (env : env) (e : expr) : expr =
 let%test "int" = "int:123" = (Int 123 |> eval glob |> dump)
 let%test "id" = "num:3.1415" = (Id "pi" |> eval glob |> dump)
 let%test "zero" = "int:0" = (Id "zero" |> eval glob |> dump)
+
+let _ =
+  Sys.getcwd () |> print_endline;
+  open_out "src/vmc.cpp" |> close_out;
+  open_out "inc/vmc.hpp" |> close_out
