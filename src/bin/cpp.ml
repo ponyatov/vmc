@@ -64,13 +64,12 @@ let dirs (path : string) : unit =
     try Sys.mkdir path 0o700 with
     | Sys_error _ -> ()
   in
-  List.iter
-    (fun d -> path ^ d |> dir)
-    [ ""; "/.vscode"; "/bin"; "/doc"; "/lib"; "/inc"; "/src"; "/tmp"; "/ref" ]
 
-(* Sys.mkdir (path ^ "/inc"); Sys.mkdir (path ^ "/inc"); Sys.mkdir (path ^
-   "/inc"); Sys.mkdir (path ^ "/inc"); Sys.mkdir (path ^ "/inc"); Sys.mkdir
-   (path ^ "/inc"); Sys.mkdir (path ^ "/inc"); Sys.mkdir (path ^ "/inc"); *)
+  List.iter
+    (fun d ->
+      path ^ d |> dir;
+      path ^ "/.gitignore" |> open_out |> close_out)
+    [ ""; "/.vscode"; "/bin"; "/doc"; "/lib"; "/inc"; "/src"; "/tmp"; "/ref" ]
 
 let _ =
   let path : string = Sys.getenv "HOME" ^ "/vmc/meta" in
