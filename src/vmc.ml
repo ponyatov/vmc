@@ -38,10 +38,14 @@ let%test "int" = "int:123" = (Int 123 |> eval glob |> dump)
 let%test "id" = "num:3.1415" = (Id "pi" |> eval glob |> dump)
 let%test "zero" = "int:0" = (Id "zero" |> eval glob |> dump)
 
+(** project path: must be in user $HOME *)
+let path = Sys.getenv "HOME" ^ "/vmc"
+
+(** run code generator on `dune test` *)
 let _ =
-  Sys.getcwd () |> print_endline;
+  (* let path = Sys.getenv "HOME" ^ "/vmc" in *)
   (* *)
-  let cpp = open_out "src/vmc.cpp" in
+  let cpp = open_out (path ^ "/src/vmc.cpp") in
   Printf.fprintf cpp
     "#include \"vmc.hpp\"
 
@@ -58,7 +62,7 @@ void arg(int argc, char *argv) {  //
 ";
   close_out cpp;
   (* *)
-  let hpp = open_out "inc/vmc.hpp" in
+  let hpp = open_out (path ^ "/inc/vmc.hpp") in
   Printf.fprintf hpp
     "#pragma once
 
