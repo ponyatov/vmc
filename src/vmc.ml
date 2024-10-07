@@ -40,6 +40,7 @@ let%test "zero" = "int:0" = (Id "zero" |> eval glob |> dump)
 
 let _ =
   Sys.getcwd () |> print_endline;
+  (* *)
   let cpp = open_out "src/vmc.cpp" in
   Printf.fprintf cpp
     "#include \"vmc.hpp\"
@@ -52,7 +53,7 @@ int main(int argc, char *argv[]) {  //
 }
 
 void arg(int argc, char *argv) {  //
-    fprintf(stderr, \"argv[%i] = <%s>\\n\", argc, argv);
+    fprintf(stderr, \"argv[%%i] = <%%s>\\n\", argc, argv);
 }
 ";
   close_out cpp;
