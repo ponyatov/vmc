@@ -30,11 +30,20 @@ tmp/format_cpp: $(C) $(H)
 
 # rule
 bin/$(MODULE): $(C) $(H)
-	$(CXX) $(CFLAGS) -o $@ $(C) $(L) && $(SIZE) $@
+	$(CXX) $(CFLAGS) -o $@ $(C) $(L)
 
 # doc
 .PHONY: doc
 doc:
+
+.PHONY: doxy
+doxy: .doxygen doc/DoxygenLayout.xml doc/logo.png
+	rm -rf docs ; doxygen $< 2>/dev/null
+
+doc/DoxygenLayout.xml:
+	doxygen -l $@ && git add $@
+doc/logo.png:
+	cp ~/icons/triangle.png $@ && git add $@
 
 # install
 .PHONY: install update ref gz

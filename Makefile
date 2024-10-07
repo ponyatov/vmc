@@ -6,11 +6,11 @@ CURL = curl -L -o
 CF   = clang-format -style=file -i
 
 # src
-M += $(wildcard src/lib/*.ml) $(wildcard src/bin/*.ml)
-D += $(wildcard dune*) $(wildcard src/lib/dune*) $(wildcard src/bin/dune*)
 C += $(wildcard meta/src/*.c*)
 H += $(wildcard meta/inc/*.h*)
 S += lib/$(MODULE).ini $(wildcard lib/*.s)
+M += $(wildcard src/lib/*.ml) $(wildcard src/bin/*.ml)
+D += $(wildcard dune*) $(wildcard src/lib/dune*) $(wildcard src/bin/dune*)
 
 # cfg
 CFLAGS += -O0 -ggdb -Iinc -Itmp
@@ -52,8 +52,12 @@ tmp/format_cpp: $(C) $(H)
 	echo "wrap-comments=true"             >> $@
 
 # rule
-bin/$(MODULE): $(C) $(H) Makefile
+bin/$(MODULE): $(C) $(H)
 	$(CXX) $(CFLAGS) -o $@ $(C) $(L)
+
+# doc
+.PHONY: doc
+doc:
 
 # install
 .PHONY: install update ref gz

@@ -81,8 +81,52 @@ let apt (path : string) (_name : string) : unit =
   "git make curl
 code meld doxygen clang-format
 g++ flex bison libreadline-dev
-" |> a;
+"
+  |> a;
   apt |> close_out
+
+let clang (path : string) (_name : string) : unit =
+  let clang = path ^ "/.clang-format" |> open_out in
+  let c = Printf.fprintf clang in
+  "BasedOnStyle: Google
+IndentWidth:  4
+TabWidth:     4
+UseTab:       Never
+ColumnLimit:  80
+UseCRLF:      false
+
+SortIncludes: false
+
+AllowShortBlocksOnASingleLine: Always
+AllowShortFunctionsOnASingleLine: All
+"
+  |> c;
+  clang |> close_out
+
+let doxy (path : string) (name : string) (info:string) : unit =
+  let doxy = path ^ "/.doxygen" |> open_out in
+  let d = Printf.fprintf doxy in
+  let dx d x = Printf.fprintf doxy x d in
+  "PROJECT_NAME           = \"%s\"\n" |> dx name;
+  "PROJECT_BRIEF          = \"%s\"\n"|> dx info;
+"PROJECT_LOGO           = doc/logo.png
+HTML_OUTPUT            = docs
+OUTPUT_DIRECTORY       =
+INPUT                  = README.md src inc
+EXCLUDE                = ref/*
+WARN_IF_UNDOCUMENTED   = NO
+RECURSIVE              = YES
+USE_MDFILE_AS_MAINPAGE = README.md
+GENERATE_LATEX         = NO
+FILE_PATTERNS         += *.lex *.yacc
+EXTENSION_MAPPING      = lex=C++ yacc=C++ ino=C++
+EXTRACT_ALL            = YES
+EXTRACT_PRIVATE        = YES
+LAYOUT_FILE            = doc/DoxygenLayout.xml
+SORT_GROUP_NAMES       = YES
+"
+  |> d;
+  doxy |> close_out
 
 let ini (path : string) (name : string) : unit =
   let ini = path ^ "/lib/" ^ name ^ ".ini" |> open_out in
@@ -143,7 +187,7 @@ tmp/format_cpp: $(C) $(H)
   "
 # rule
 bin/$(MODULE): $(C) $(H)
-\t$(CXX) $(CFLAGS) -o $@ $(C) $(L) && $(SIZE) $@
+\t$(CXX) $(CFLAGS) -o $@ $(C) $(L)
 "
   |> m;
   (* *)
@@ -151,6 +195,15 @@ bin/$(MODULE): $(C) $(H)
 # doc
 .PHONY: doc
 doc:
+
+.PHONY: doxy
+doxy: .doxygen doc/DoxygenLayout.xml doc/logo.png
+\trm -rf docs ; doxygen $< 2>/dev/null
+
+doc/DoxygenLayout.xml:
+\tdoxygen -l $@ && git add $@
+doc/logo.png:
+\tcp ~/icons/triangle.png $@ && git add $@
 " |> m;
   (* *)
   "
@@ -168,12 +221,14 @@ gz:
   (* *)
   close_out mk
 
-let gen (name : string) : unit =
+let gen (name : string) (info:string): unit =
   let path : string = Sys.getenv "HOME" ^ "/vmc/" ^ name in
   dirs path name;
   mk path name;
   apt path name;
   ini path name;
+  clang path name;
+  doxy path name info;
   let hpp = open_out (path ^ "/inc/" ^ name ^ ".hpp") in
   let cpp = open_out (path ^ "/src/" ^ name ^ ".cpp") in
   incl hpp cpp name;
@@ -182,4 +237,4 @@ let gen (name : string) : unit =
   close_out hpp;
   close_out cpp
 
-let _ = gen "meta"
+let _ = gen "meta" "Virtual Machine Compiler"
