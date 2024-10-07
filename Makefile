@@ -27,8 +27,8 @@ utop: $(M) $(D) $(S)
 	dune $@
 
 .PHONY: cpp
-cpp: bin/$(MODULE) $(S)
-	$^
+cpp:
+	$(MAKE) -C meta run
 
 # test
 .PHONY: test

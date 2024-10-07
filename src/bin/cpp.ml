@@ -75,9 +75,69 @@ let dirs (path : string) (_name : string) : unit =
          "!.gitignore\n" |> g;
          close_out giti)
 
+let ini (path : string) (name : string) : unit =
+  let ini = path ^ "/lib/" ^ name ^ ".ini" |> open_out in
+  let i = Printf.fprintf ini in
+  let ix f x = Printf.fprintf ini x f in
+  "# line comment\n" |> i;
+  "MODULE = '%s'\n" |> ix name;
+  ini |> close_out
+
+let mk (path : string) (name : string) : unit =
+  let mk = path ^ "/Makefile" |> open_out in
+  let m = Printf.fprintf mk in
+  let mx x f = Printf.fprintf mk f x in
+  (* *)
+  "# var
+MODULE ?= %s
+" |> mx name;
+  (* *)
+  "
+# dir
+CWD = $(CURDIR)
+" |> m;
+  (* *)
+  "
+# tool
+CURL = curl -L -o
+CF   = clang-format -type=file -i
+" |> m;
+  (* *)
+  "
+# src
+C += $(wildcard src/*.c*)
+H += $(wildcard inc/*.h*)
+" |> m;
+  (* *)
+  "
+# cfg
+CFLAGS += -O0 -ggdb -Iinc -Itmp
+" |> m;
+  (* *)
+  let bi = "bin/$(MODULE) inc/$(MODULE).ini" in
+  "\n# all\n.PHONY: all run" |> m;
+  "\nall: %s" |> mx bi;
+  "\nrun: %s" |> mx bi;
+  "\n\t$^\n" |> m;
+  (* *)
+  "\n# format\n" |> m;
+  (* *)
+  "
+# rule
+bin/$(MODULE): $(C) $(H)
+\t$(CXX) $(CFLAGS) -o $@ $(C) $(L) && $(SIZE) $@
+"
+  |> m;
+  (* *)
+  "\n# install\n" |> m;
+  (* *)
+  close_out mk
+
 let gen (name : string) : unit =
   let path : string = Sys.getenv "HOME" ^ "/vmc/" ^ name in
   dirs path name;
+  mk path name;
+  ini path name;
   let hpp = open_out (path ^ "/inc/" ^ name ^ ".hpp") in
   let cpp = open_out (path ^ "/src/" ^ name ^ ".cpp") in
   incl hpp cpp name;
