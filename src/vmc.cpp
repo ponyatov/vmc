@@ -1,3 +1,4 @@
+/// @file @brief Virtual Machine Compiled (code)
 #include "vmc.hpp"
 
 int main(int argc, char *argv[]) {  //
