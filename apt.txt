@@ -1,0 +1,5 @@
+git make curl
+code meld doxygen clang-format
+g++ libreadline-dev ragel
+ocaml opam utop dune
+libcamlp4-ocaml-dev
