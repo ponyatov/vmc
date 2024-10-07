@@ -1,4 +1,4 @@
 #use "topfind";;
 #require "vmc";;
-open vmc;;
-#install_printer vmc.pp;;
+open Vmc;;
+#install_printer Vmc.pp;;
