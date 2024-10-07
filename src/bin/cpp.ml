@@ -75,6 +75,15 @@ let dirs (path : string) (_name : string) : unit =
          "!.gitignore\n" |> g;
          close_out giti)
 
+let apt (path : string) (_name : string) : unit =
+  let apt = path ^ "/apt.txt" |> open_out in
+  let a = Printf.fprintf apt in
+  "git make curl
+code meld doxygen clang-format
+g++ flex bison libreadline-dev
+" |> a;
+  apt |> close_out
+
 let ini (path : string) (name : string) : unit =
   let ini = path ^ "/lib/" ^ name ^ ".ini" |> open_out in
   let i = Printf.fprintf ini in
@@ -100,7 +109,7 @@ CWD = $(CURDIR)
   "
 # tool
 CURL = curl -L -o
-CF   = clang-format -type=file -i
+CF   = clang-format -style=file -i
 " |> m;
   (* *)
   "
@@ -108,7 +117,8 @@ CF   = clang-format -type=file -i
 C += $(wildcard src/*.c*)
 H += $(wildcard inc/*.h*)
 S += lib/$(MODULE).ini $(wildcard lib/*.s)
-" |> m;
+"
+  |> m;
   (* *)
   "
 # cfg
@@ -121,7 +131,14 @@ CFLAGS += -O0 -ggdb -Iinc -Itmp
   "\nrun: %s" |> mx bi;
   "\n\t$^\n" |> m;
   (* *)
-  "\n# format\n" |> m;
+  "
+# format
+.PHONY: format
+format: tmp/format_cpp
+tmp/format_cpp: $(C) $(H)
+\t$(CF) $^ && touch $@
+"
+  |> m;
   (* *)
   "
 # rule
@@ -130,7 +147,24 @@ bin/$(MODULE): $(C) $(H)
 "
   |> m;
   (* *)
-  "\n# install\n" |> m;
+  "
+# doc
+.PHONY: doc
+doc:
+" |> m;
+  (* *)
+  "
+# install
+.PHONY: install update ref gz
+install: doc ref gz
+\t$(MAKE) update
+update:
+\tsudo apt update
+\tsudo apt install -uy `cat apt.txt`
+ref:
+gz:
+"
+  |> m;
   (* *)
   close_out mk
 
@@ -138,6 +172,7 @@ let gen (name : string) : unit =
   let path : string = Sys.getenv "HOME" ^ "/vmc/" ^ name in
   dirs path name;
   mk path name;
+  apt path name;
   ini path name;
   let hpp = open_out (path ^ "/inc/" ^ name ^ ".hpp") in
   let cpp = open_out (path ^ "/src/" ^ name ^ ".cpp") in

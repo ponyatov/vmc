@@ -8,9 +8,9 @@ CF   = clang-format -style=file -i
 # src
 M += $(wildcard src/lib/*.ml) $(wildcard src/bin/*.ml)
 D += $(wildcard dune*) $(wildcard src/lib/dune*) $(wildcard src/bin/dune*)
-S += lib/$(MODULE).ini $(wildcard lib/*.c)
 C += $(wildcard meta/src/*.c*)
 H += $(wildcard meta/inc/*.h*)
+S += lib/$(MODULE).ini $(wildcard lib/*.s)
 
 # cfg
 CFLAGS += -O0 -ggdb -Iinc -Itmp
@@ -56,7 +56,7 @@ bin/$(MODULE): $(C) $(H) Makefile
 	$(CXX) $(CFLAGS) -o $@ $(C) $(L)
 
 # install
-.PHONY: install update
+.PHONY: install update ref gz
 install: doc ref gz
 	$(MAKE) update
 update:
