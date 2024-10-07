@@ -6,8 +6,8 @@ CURL = curl -L -o
 CF   = clang-format -style=file -i
 
 # src
-M += $(wildcard src/*.ml)
-D += $(wildcard dune*) $(wildcard src/dune*)
+M += $(wildcard src/lib/*.ml) $(wildcard src/bin/*.ml)
+D += $(wildcard dune*) $(wildcard src/lib/dune*) $(wildcard src/bin/dune*)
 S += lib/$(MODULE).ini $(wildcard lib/*.c)
 C += $(wildcard src/*.c*)
 H += $(wildcard inc/*.h*)
@@ -18,9 +18,9 @@ CFLAGS += -O0 -ggdb -Iinc -Itmp
 # all
 .PHONY: all run
 all: $(M) $(D) $(S)
-	dune build src/$(MODULE).exe
+	dune build src/bin/$(MODULE).exe
 run: $(M) $(D) $(S)
-	dune exec src/$(MODULE).exe $(S)
+	dune exec src/bin/cpp.exe $(S)
 
 .PHONY: utop
 utop: $(M) $(D) $(S)
