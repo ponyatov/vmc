@@ -107,6 +107,7 @@ CF   = clang-format -type=file -i
 # src
 C += $(wildcard src/*.c*)
 H += $(wildcard inc/*.h*)
+S += lib/$(MODULE).ini $(wildcard lib/*.s)
 " |> m;
   (* *)
   "
@@ -114,7 +115,7 @@ H += $(wildcard inc/*.h*)
 CFLAGS += -O0 -ggdb -Iinc -Itmp
 " |> m;
   (* *)
-  let bi = "bin/$(MODULE) inc/$(MODULE).ini" in
+  let bi = "bin/$(MODULE) $(S)" in
   "\n# all\n.PHONY: all run" |> m;
   "\nall: %s" |> mx bi;
   "\nrun: %s" |> mx bi;

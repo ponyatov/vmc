@@ -11,14 +11,15 @@ CF   = clang-format -type=file -i
 # src
 C += $(wildcard src/*.c*)
 H += $(wildcard inc/*.h*)
+S += lib/$(MODULE).ini $(wildcard lib/*.s)
 
 # cfg
 CFLAGS += -O0 -ggdb -Iinc -Itmp
 
 # all
 .PHONY: all run
-all: bin/$(MODULE) inc/$(MODULE).ini
-run: bin/$(MODULE) inc/$(MODULE).ini
+all: bin/$(MODULE) $(S)
+run: bin/$(MODULE) $(S)
 	$^
 
 # format
