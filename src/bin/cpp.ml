@@ -65,11 +65,10 @@ let dirs (path : string) (_name : string) : unit =
     | Sys_error _ -> ()
   in
 
-  List.iter
-    (fun d ->
-      path ^ d |> dir;
-      path ^ "/.gitignore" |> open_out |> close_out)
-    [ ""; "/.vscode"; "/bin"; "/doc"; "/lib"; "/inc"; "/src"; "/tmp"; "/ref" ]
+  [ ""; "/.vscode"; "/bin"; "/doc"; "/lib"; "/inc"; "/src"; "/tmp"; "/ref" ]
+  |> List.iter (fun d ->
+         path ^ d |> dir;
+         path ^ d ^ "/.gitignore" |> open_out |> close_out)
 
 let gen (name : string) : unit =
   let path : string = Sys.getenv "HOME" ^ "/vmc/" ^ name in
